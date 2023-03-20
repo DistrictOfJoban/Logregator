@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "logregator",
+  "version": "${version}",
+
+  "name": "Logregator",
+  "description": "A logging mod for Minecraft.",
+  "authors": [
+    "LX86"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": "https://github.com/DistrictOfJoban/Logregator"
+  },
+
+  "license": "MIT",
+  "icon": "assets/logregator/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.lx.logregator.Logregator"
+    ]
+  },
+  "mixins": [
+    "logregator.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.9",
+    "fabric": "*",
+    "minecraft": ">=1.17"
+
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

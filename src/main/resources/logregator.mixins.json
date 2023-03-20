@@ -1,0 +1,15 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "com.lx.logregator.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "PlayerInventoryMixin",
+    "RailwayDataLoggingModuleMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}
