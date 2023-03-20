@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
@@ -169,7 +170,12 @@ public class MTRLoggingManager {
         }
         if(fieldName.equals("dwell_time")) {
             int dwell = (int)(Integer.parseInt(value) / 2.0) * 1000;
-            return Util.formatTime(dwell, true);
+
+            if(className.equals("mtr.data.Siding")) {
+                return Util.formatTime(dwell, true) + " (Manual Drive Timeout)";
+            } else {
+                return Util.formatTime(dwell, true);
+            }
         }
 
         if(fieldName.equals("route_ids")) {
@@ -187,6 +193,11 @@ public class MTRLoggingManager {
             return resultStr.toString();
         }
 
+        if(fieldName.equals("acceleration_constant")) {
+            double val = Double.parseDouble(value);
+            DecimalFormat df = new DecimalFormat("#.#");
+            return df.format(val * 2) + " km/h/s";
+        }
 
         return value;
     }
@@ -265,7 +276,7 @@ public class MTRLoggingManager {
 
         /* Get Context */
         Integer color = getColor(oldData, newData);
-        String displayedName = !name.isEmpty() ? " \\\" " + IGui.formatStationName(name) + " \\\" " : " ";
+        String displayedName = !name.isEmpty() ? " \\\"" + IGui.formatStationName(name) + "\\\" " : " ";
 
         if(positions.length > 0) {
             StringBuilder sb = new StringBuilder();
