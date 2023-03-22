@@ -1,5 +1,6 @@
-package com.lx.logregator.data;
+package com.lx.logregator.data.event;
 
+import com.lx.logregator.Util;
 import com.lx.logregator.config.LogregatorConfig;
 import com.lx.logregator.data.webhook.DiscordEmbed;
 import com.lx.logregator.data.webhook.DiscordWebhook;
@@ -27,7 +28,7 @@ public class FilteredItem extends Event {
         webhook.addEmbed(new DiscordEmbed()
                 .setAuthor(player.getGameProfile().getName(), null, "https://minotar.net/avatar/" + player.getGameProfile().getName() + "/16")
                 .setTitle(":warning: Filtered Items in Player's inventory")
-                .setDescription("Player " + player.getGameProfile().getName() + " has obtained **" + itemIdentifier + "**")
+                .setDescription(String.format("Player %s has obtained ** %s **\\nStanding at: %s", player.getGameProfile().getName(), itemIdentifier, Util.formatBlockPos(player.getBlockPos())))
                 .setTimestamp()
         );
         try {

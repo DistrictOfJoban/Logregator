@@ -1,7 +1,7 @@
 package com.lx.logregator.data.webhook;
 
 import com.lx.logregator.config.LogregatorConfig;
-import com.lx.logregator.data.EventType;
+import com.lx.logregator.data.event.EventType;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;

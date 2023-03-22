@@ -3,6 +3,7 @@ package com.lx.logregator;
 import com.google.gson.JsonArray;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,10 @@ public class Util {
             }
         }
         return 0;
+    }
+
+    public static String formatBlockPos(BlockPos pos) {
+        return String.format("`%d,%d,%d`", pos.getX(), pos.getY(), pos.getZ());
     }
 
     public static List<Integer> fromJsonArray(JsonArray arr) {

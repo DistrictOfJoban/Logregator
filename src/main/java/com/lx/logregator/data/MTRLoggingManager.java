@@ -1,6 +1,7 @@
 package com.lx.logregator.data;
 
 import com.lx.logregator.config.LogregatorConfig;
+import com.lx.logregator.data.event.EventType;
 import com.lx.logregator.data.webhook.DiscordEmbed;
 import com.lx.logregator.data.webhook.DiscordWebhook;
 import com.lx.logregator.Util;

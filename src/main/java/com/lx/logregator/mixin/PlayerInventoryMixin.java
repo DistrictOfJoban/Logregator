@@ -1,6 +1,6 @@
 package com.lx.logregator.mixin;
 
-import com.lx.logregator.Events;
+import com.lx.logregator.EventAction;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -17,6 +17,6 @@ public class PlayerInventoryMixin {
 
     @Inject(method= "addStack(ILnet/minecraft/item/ItemStack;)I", at = @At("HEAD"))
     public void addStack(int slot, ItemStack stack, CallbackInfoReturnable<Integer> ci) {
-        Events.checkLoggedItems(player, stack);
+        EventAction.checkLoggedItems(player, stack);
     }
 }

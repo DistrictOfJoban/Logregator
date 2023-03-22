@@ -1,4 +1,4 @@
-package com.lx.logregator.data;
+package com.lx.logregator.data.event;
 
 import com.lx.logregator.Util;
 import net.minecraft.entity.player.PlayerEntity;

@@ -1,6 +1,6 @@
 package com.lx.logregator.data.webhook;
 
-import com.lx.logregator.data.EventType;
+import com.lx.logregator.data.event.EventType;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
