@@ -23,7 +23,7 @@ public class EventAction {
     }
 
     public static void onWorldEvent(Entity entity, GameEvent gameEvent, BlockPos pos) {
-        if(!entity.isPlayer()) return;
+        if(entity == null || !entity.isPlayer()) return;
         if(gameEvent == GameEvent.BLOCK_DESTROY) {
             PlayerEntity player = (PlayerEntity)entity;
             for(BlockDestroy entry : LogregatorConfig.blockBreak) {
