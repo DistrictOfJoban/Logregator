@@ -2,14 +2,13 @@ package com.lx.logregator;
 
 import com.google.gson.JsonArray;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Util {
-    private static int PERM_LEVEL = 5;
+    private static int PERM_LEVEL = 4;
     public static String padZero(int i) {
         if(i <= 9) {
             return "0" + i;
@@ -37,7 +36,7 @@ public class Util {
     }
 
     public static int getPermissionLevel(PlayerEntity player) {
-        for(int i = 0; i < PERM_LEVEL; i++) {
+        for(int i = 0; i <= PERM_LEVEL; i++) {
             if(player.hasPermissionLevel(PERM_LEVEL - i)) {
                 return i;
             }
