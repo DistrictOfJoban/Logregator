@@ -13,7 +13,7 @@ import java.util.*;
 
 public class Logregator implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("Logregator");
-    public static Optional<MTRLoggingManager> mtrLoggingManager;
+    public static MTRLoggingManager mtrLoggingManager;
     public static Version versions = null;
 
     @Override
@@ -21,7 +21,7 @@ public class Logregator implements ModInitializer {
         versions = FabricLoader.getInstance().getModContainer("logregator").get().getMetadata().getVersion();
         LOGGER.info("[Logregator] Version " + String.valueOf(versions));
         LogregatorConfig.load();
-        mtrLoggingManager = Optional.of(new MTRLoggingManager());
+        mtrLoggingManager = new MTRLoggingManager();
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             CommandHandler.registerCMDS(dispatcher);
