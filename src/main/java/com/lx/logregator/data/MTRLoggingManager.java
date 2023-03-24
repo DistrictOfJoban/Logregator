@@ -37,6 +37,7 @@ public class MTRLoggingManager {
         nameMapping.put("mtr.block.BlockRouteSignStandingMetal$TileEntityRouteSignStandingMetal", "MTR Route Sign (Standing Metal)");
         nameMapping.put("mtr.block.BlockRouteSignStandingWallLight$TileEntityRouteSignStandingWallLight", "MTR Route Sign (Wall Light)");
         nameMapping.put("mtr.block.BlockRouteSignStandingWallMetal$TileEntityRouteSignStandingWallMetal", "MTR Route Sign (Wall Metal)");
+        nameMapping.put("top.mcmtr.blocks.BlockYamanoteRailwaySign$TileEntityRailwaySign", "MSD Yamonote Railway Sign");
         nameMapping.put("com.jsblock.block.PIDS1A$TileEntityBlockPIDS1A", "JCM PIDS 1A");
         nameMapping.put("mtr.data.LiftServer", "MTR Lift");
         nameMapping.put("mtr.data.Siding", "MTR Siding");
@@ -92,6 +93,13 @@ public class MTRLoggingManager {
         keyMapping.put("sign_length4", "Slot 5");
         keyMapping.put("sign_length5", "Slot 6");
         keyMapping.put("sign_length6", "Slot 7");
+        keyMapping.put("yamanote_sign_length0", "Slot 1");
+        keyMapping.put("yamanote_sign_length1", "Slot 2");
+        keyMapping.put("yamanote_sign_length2", "Slot 3");
+        keyMapping.put("yamanote_sign_length3", "Slot 4");
+        keyMapping.put("yamanote_sign_length4", "Slot 5");
+        keyMapping.put("yamanote_sign_length5", "Slot 6");
+        keyMapping.put("yamanote_sign_length6", "Slot 7");
         keyMapping.put("sound_id", "Sound ID");
         keyMapping.put("message", "Message");
         keyMapping.put("stopped_only", "Stopped Only");
@@ -244,7 +252,7 @@ public class MTRLoggingManager {
 
     private void processMTREvent(ServerPlayerEntity player, Class<?> dataClass, long id, String name, List<String> oldData, List<String> newData, List<String> oldDataDiff, List<String> newDataDiff, BlockPos[] positions, MTRActionType actionType) {
         String className = dataClass.getName();
-        EventType eventType = className.contains(".block.") ? EventType.MTR_BLOCK : EventType.MTR_DATA;
+        EventType eventType = className.contains(".block.") || className.contains(".blocks.") || className.contains("$TileEntity")) ? EventType.MTR_BLOCK : EventType.MTR_DATA;
         DiscordWebhook webhook = new DiscordWebhook(LogregatorConfig.webhookUrl);
         DiscordEmbed embed = new DiscordEmbed();
 
