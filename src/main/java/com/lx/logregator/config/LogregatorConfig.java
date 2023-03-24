@@ -39,18 +39,6 @@ public class LogregatorConfig {
                 webhookUrl = jsonConfig.get("webhook").getAsString();
             }
 
-            if(jsonConfig.has("events")) {
-                jsonConfig.getAsJsonArray("events").forEach(e -> {
-                    String evType = e.getAsString();
-                    try {
-                        EventType type = EventType.valueOf(evType);
-                        subscribedEvent.add(type);
-                    } catch (IllegalArgumentException ignored) {
-                        Logregator.LOGGER.warn(evType + "is not a valid EventType!");
-                    }
-                });
-            }
-
             if(jsonConfig.has("filteredItems")) {
                 jsonConfig.getAsJsonArray("filteredItems").forEach(e -> {
                     JsonObject object = e.getAsJsonObject();
@@ -63,6 +51,7 @@ public class LogregatorConfig {
 
                     filteredItems.add(new FilteredItem(id, permLevel));
                 });
+                subscribedEvent.add(EventType.FILTERED_ITEM);
             }
 
             if(jsonConfig.has("blockBreak")) {
@@ -83,6 +72,15 @@ public class LogregatorConfig {
 
                     blockBreak.add(new BlockDestroy(blockId, area, permLevel));
                 });
+                subscribedEvent.add(EventType.BLOCK_BREAK);
+            }
+
+            if(jsonConfig.has("mtr")) {
+                boolean logBlock = jsonConfig.get("mtr").getAsJsonObject().get("logBlock").getAsBoolean();
+                boolean logRailwayData = jsonConfig.get("mtr").getAsJsonObject().get("logRailwayData").getAsBoolean();
+
+                if(logBlock) subscribedEvent.add(EventType.MTR_BLOCK);
+                if(logRailwayData) subscribedEvent.add(EventType.MTR_DATA);
             }
         } catch (Exception e) {
             e.printStackTrace();
