@@ -252,7 +252,7 @@ public class MTRLoggingManager {
 
     private void processMTREvent(ServerPlayerEntity player, Class<?> dataClass, long id, String name, List<String> oldData, List<String> newData, List<String> oldDataDiff, List<String> newDataDiff, BlockPos[] positions, MTRActionType actionType) {
         String className = dataClass.getName();
-        EventType eventType = className.contains(".block.") || className.contains(".blocks.") || className.contains("$TileEntity")) ? EventType.MTR_BLOCK : EventType.MTR_DATA;
+        EventType eventType = className.contains(".block.") || className.contains(".blocks.") || className.contains("$TileEntity") ? EventType.MTR_BLOCK : EventType.MTR_DATA;
         DiscordWebhook webhook = new DiscordWebhook(LogregatorConfig.webhookUrl);
         DiscordEmbed embed = new DiscordEmbed();
 
