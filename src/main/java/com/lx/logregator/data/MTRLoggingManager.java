@@ -52,6 +52,7 @@ public class MTRLoggingManager {
         keyMapping.put("id", "Internal ID");
         keyMapping.put("transport_mode", "Transport Type");
         keyMapping.put("color", "Color");
+        keyMapping.put("platform_ids", "Platforms");
         keyMapping.put("is_light_rail_route", "Light Rail Route?");
         keyMapping.put("train_custom_id", "Train Type");
         keyMapping.put("train_type", "Train Base Type");
@@ -147,10 +148,10 @@ public class MTRLoggingManager {
         // Real time scheduled departure
         if(fieldName.equals("departures")) {
             if(value.equals("[]")) return "N/A";
-            final long offset = System.currentTimeMillis() / Depot.MILLISECONDS_PER_DAY * Depot.MILLISECONDS_PER_DAY;
-            final StringBuilder resultStr = new StringBuilder();
-            final String[] departures = value.substring(1, value.length() - 1).split(",");
-            final int entryLimit = 35;
+            long offset = System.currentTimeMillis() / Depot.MILLISECONDS_PER_DAY * Depot.MILLISECONDS_PER_DAY;
+            StringBuilder resultStr = new StringBuilder();
+            String[] departures = value.substring(1, value.length() - 1).split(",");
+            int entryLimit = 35;
 
             Long lastDeparture = null;
             int i = 0;
@@ -160,11 +161,11 @@ public class MTRLoggingManager {
                     break;
                 }
                 long depTime = Long.parseLong(departure);
-                final Calendar calendar = Calendar.getInstance();
+                Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(depTime + offset);
-                final int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                final int minute = calendar.get(Calendar.MINUTE);
-                final int second = calendar.get(Calendar.SECOND);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+                int second = calendar.get(Calendar.SECOND);
                 String hms = String.format("%02d:%02d:%02d", hour, minute, second);
                 resultStr.append("\\n").append(hms);
 
@@ -190,13 +191,36 @@ public class MTRLoggingManager {
         if(fieldName.equals("route_ids")) {
             if(value.equals("[]")) return "N/A";
             RailwayData data = RailwayData.getInstance(world);
-            final StringBuilder resultStr = new StringBuilder();
-            final String[] routeIds = value.substring(1, value.length() - 1).split(",");
+            StringBuilder resultStr = new StringBuilder();
+            String[] routeIds = value.substring(1, value.length() - 1).split(",");
             for(String routeIdStr : routeIds) {
                 long routeId = Long.parseLong(routeIdStr);
                 Route route = data.dataCache.routeIdMap.get(routeId);
                 if(route != null) {
                     resultStr.append("\\n").append(IGui.formatStationName(route.name));
+                }
+            }
+            return resultStr.toString();
+        }
+
+        if(fieldName.equals("platform_ids")) {
+            if(value.equals("[]")) return "N/A";
+            RailwayData data = RailwayData.getInstance(world);
+            StringBuilder resultStr = new StringBuilder();
+            String[] platformIds = value.substring(1, value.length() - 1).split(",");
+            for(String platformIdStr : platformIds) {
+                long platformId = Long.parseLong(platformIdStr);
+                Station station = data.dataCache.platformIdToStation.get(platformId);
+                String stnName;
+                if(station != null) {
+                    stnName = IGui.formatStationName(station.name);
+                } else {
+                    stnName = "";
+                }
+                Platform platform = data.dataCache.platformIdMap.get(platformId);
+                if(platform != null) {
+                    String platformString = " (" + platform.name + ")";
+                    resultStr.append("\\n").append(stnName).append(platformString);
                 }
             }
             return resultStr.toString();
