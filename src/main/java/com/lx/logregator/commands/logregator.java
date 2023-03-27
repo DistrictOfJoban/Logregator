@@ -10,6 +10,7 @@ import net.minecraft.util.Formatting;
 public class logregator {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
             dispatcher.register(net.minecraft.server.command.CommandManager.literal("logregator")
+                .requires(ctx -> ctx.hasPermissionLevel(2))
                 .then(CommandManager.literal("reload")
                 .executes(context -> {
                     boolean success = LogregatorConfig.load();
