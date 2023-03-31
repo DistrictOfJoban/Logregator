@@ -4,9 +4,10 @@ import com.google.gson.*;
 import com.lx.logregator.Logregator;
 import com.lx.logregator.Util;
 import com.lx.logregator.data.Area;
-import com.lx.logregator.data.event.BlockDestroy;
+import com.lx.logregator.data.event.BlockDestroyEvent;
+import com.lx.logregator.data.event.BlockPlaceEvent;
 import com.lx.logregator.data.event.EventType;
-import com.lx.logregator.data.event.FilteredItem;
+import com.lx.logregator.data.event.FilteredItemEvent;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.nio.file.Files;
@@ -17,14 +18,16 @@ import java.util.*;
 public class LogregatorConfig {
     private static final Path CONFIG_PATH = Paths.get(FabricLoader.getInstance().getConfigDir().toString(), "logregator", "config.json");
     public static final List<EventType> subscribedEvent = new ArrayList<>();
-    public static final List<FilteredItem> filteredItems = new ArrayList<>();
-    public static final List<BlockDestroy> blockBreak = new ArrayList<>();
+    public static final List<FilteredItemEvent> filteredItems = new ArrayList<>();
+    public static final List<BlockDestroyEvent> blockBreak = new ArrayList<>();
+    public static final List<BlockPlaceEvent> blockPlace = new ArrayList<>();
     public static String webhookUrl;
 
     public static boolean load() {
         subscribedEvent.clear();
         filteredItems.clear();
         blockBreak.clear();
+        blockPlace.clear();
         if(!Files.exists(CONFIG_PATH)) {
             Logregator.LOGGER.warn("[Logregator] Config file not found, generating one...");
             write();
@@ -49,7 +52,7 @@ public class LogregatorConfig {
                         permLevel.addAll(Util.fromJsonArray(object.get("permLevel").getAsJsonArray()));
                     }
 
-                    filteredItems.add(new FilteredItem(id, permLevel));
+                    filteredItems.add(new FilteredItemEvent(id, permLevel));
                 });
                 subscribedEvent.add(EventType.FILTERED_ITEM);
             }
@@ -57,7 +60,12 @@ public class LogregatorConfig {
             if(jsonConfig.has("blockBreak")) {
                 jsonConfig.getAsJsonArray("blockBreak").forEach(e -> {
                     JsonObject object = e.getAsJsonObject();
-                    String blockId = object.get("blockId").getAsString();
+                    String blockId;
+                    if(object.has("blockId")) {
+                        blockId = object.get("blockId").getAsString();
+                    } else {
+                        blockId = null;
+                    }
                     Area area;
                     if(object.has("area")) {
                         area = new Area(object.get("area").getAsJsonObject());
@@ -70,9 +78,36 @@ public class LogregatorConfig {
                         permLevel.addAll(Util.fromJsonArray(object.get("permLevel").getAsJsonArray()));
                     }
 
-                    blockBreak.add(new BlockDestroy(blockId, area, permLevel));
+                    blockBreak.add(new BlockDestroyEvent(blockId, area, permLevel));
                 });
                 subscribedEvent.add(EventType.BLOCK_BREAK);
+            }
+
+            if(jsonConfig.has("blockPlace")) {
+                jsonConfig.getAsJsonArray("blockPlace").forEach(e -> {
+                    JsonObject object = e.getAsJsonObject();
+                    String blockId;
+                    if(object.has("blockId")) {
+                        blockId = object.get("blockId").getAsString();
+                    } else {
+                        blockId = null;
+                    }
+
+                    Area area;
+                    if(object.has("area")) {
+                        area = new Area(object.get("area").getAsJsonObject());
+                    } else {
+                        area = null;
+                    }
+
+                    List<Integer> permLevel = new ArrayList<>();
+                    if(object.has("permLevel")) {
+                        permLevel.addAll(Util.fromJsonArray(object.get("permLevel").getAsJsonArray()));
+                    }
+
+                    blockPlace.add(new BlockPlaceEvent(blockId, area, permLevel));
+                });
+                subscribedEvent.add(EventType.BLOCK_PLACE);
             }
 
             if(jsonConfig.has("mtr")) {

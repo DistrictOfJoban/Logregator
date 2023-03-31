@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-public class FilteredItem extends Event {
+public class FilteredItemEvent extends Event {
     private final String itemId;
-    public FilteredItem(String itemId, List<Integer> permLevel) {
+    public FilteredItemEvent(String itemId, List<Integer> permLevel) {
         super(permLevel);
         this.itemId = itemId;
     }

@@ -4,5 +4,6 @@ public enum EventType {
     MTR_BLOCK,
     MTR_DATA,
     FILTERED_ITEM,
-    BLOCK_BREAK
+    BLOCK_BREAK,
+    BLOCK_PLACE
 }
