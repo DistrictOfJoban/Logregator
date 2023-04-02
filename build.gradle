@@ -11,14 +11,18 @@ targetCompatibility = JavaVersion.VERSION_16
 version = project.mod_version
 group = project.maven_group
 
-def minecraft_version = project.target_mc_version
+def default_minecraft_version = "1.17.1"
+def minecraft_version = project.properties.containsKey("buildVersion") ? project.getProperties().get("buildVersion") : default_minecraft_version
 def minecraft_major_version = minecraft_version.split("\\.")[0] as int // Always return 1, unless mojang goes haywire :P
 def minecraft_main_version = minecraft_version.split("\\.")[1] as int
+def mc_requirement = "${minecraft_major_version}.${minecraft_main_version}.x"
 def minecraft_minor_version = minecraft_version.split("\\.").size() > 2 ? minecraft_version.split("\\.")[2] as int : 0
 def minecraft_version_str = (minecraft_major_version as String) + (minecraft_main_version as String).padLeft(2, '0') + (minecraft_minor_version as String).padLeft(2, '0')
 def yarn_mappings = new JsonSlurper().parse(("https://meta.fabricmc.net/v2/versions/yarn/" + minecraft_version).toURL())[0]["version"]
 def loader_version = project.loader_version
 def fapi_version = getModrinthVersion("fabric", minecraft_version, "fabric-api")
+
+version = minecraft_version + "-" + project.mod_version
 
 repositories {
 	// Add repositories to retrieve artifacts from in here.
@@ -52,22 +56,22 @@ task downloadOptimizedMod() {
 		def outputPath = "run/mods/"
 
 		download {
-			src getModrinthDLURL("fabric", project.target_mc_version, "lazydfu")
+			src getModrinthDLURL("fabric", minecraft_version, "lazydfu")
 			dest outputPath + "dfu.jar"
 			overwrite true
 		}
 		download {
-			src getModrinthDLURL("fabric", project.target_mc_version, "ferrite-core")
+			src getModrinthDLURL("fabric", minecraft_version, "ferrite-core")
 			dest outputPath + "ferrite-core.jar"
 			overwrite true
 		}
 		download {
-			src getModrinthDLURL("fabric", project.target_mc_version, "smoothboot-fabric")
+			src getModrinthDLURL("fabric", minecraft_version, "smoothboot-fabric")
 			dest outputPath + "smooth-boot.jar"
 			overwrite true
 		}
 		download {
-			src getModrinthDLURL("fabric", project.target_mc_version, "ksyxis")
+			src getModrinthDLURL("fabric", minecraft_version, "ksyxis")
 			dest outputPath + "ksyxis.jar"
 			overwrite true
 		}
@@ -93,7 +97,10 @@ processResources {
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand (
+				"version": project.version,
+				"mc_version": mc_requirement
+		)
 	}
 }
 

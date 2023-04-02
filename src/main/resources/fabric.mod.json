@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Logregator",
-  "description": "A logging mod for Minecraft.",
+  "description": "A webhook logging mod for Minecraft.",
   "authors": [
     "LX86"
   ],
@@ -29,7 +29,7 @@
   "depends": {
     "fabricloader": ">=0.9",
     "fabric": "*",
-    "minecraft": ">=1.17"
+    "minecraft": "${mc_version}"
 
   },
   "suggests": {

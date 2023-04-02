@@ -3,13 +3,10 @@ package com.lx.logregator;
 import com.lx.logregator.config.LogregatorConfig;
 import com.lx.logregator.data.MTRLoggingManager;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.*;
 
 public class Logregator implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("Logregator");
@@ -23,7 +20,7 @@ public class Logregator implements ModInitializer {
         LogregatorConfig.load();
         mtrLoggingManager = new MTRLoggingManager();
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        Mappings.registerCommand((dispatcher) -> {
             CommandHandler.registerCMDS(dispatcher);
         });
     }
