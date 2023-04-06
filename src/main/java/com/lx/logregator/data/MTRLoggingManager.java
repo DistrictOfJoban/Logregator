@@ -52,19 +52,24 @@ public class MTRLoggingManager {
         keyMapping.put("id", "Internal ID");
         keyMapping.put("transport_mode", "Transport Type");
         keyMapping.put("color", "Color");
+        keyMapping.put("type", "Type");
         keyMapping.put("platform_ids", "Platforms");
-        keyMapping.put("is_light_rail_route", "Light Rail Route?");
+        keyMapping.put("is_light_rail_route", "Light Rail Route");
+        keyMapping.put("is_route_hidden", "Route hidden");
         keyMapping.put("train_custom_id", "Train Type");
         keyMapping.put("train_type", "Train Base Type");
         keyMapping.put("dwell_time", "Dwell time");
         keyMapping.put("platform_id", "Platform IDs");
+        keyMapping.put("circular_state", "Circular State");
         keyMapping.put("custom_destinations", "Custom Destinations");
         keyMapping.put("route_type", "Route Type");
-        keyMapping.put("light_rail_route_number", "LRT No.");
+        keyMapping.put("light_rail_route_number", "LRT No");
+        keyMapping.put("disable_next_station_announcements", "Disable MTR auto next station announcement");
         keyMapping.put("use_real_time", "Real time Scheduling?");
         keyMapping.put("repeat_infinitely", "Repeat Route Instructions?");
         keyMapping.put("frequencies", "Schedule frequencies");
         keyMapping.put("departures", "Scheduled timetable");
+        keyMapping.put("acceleration_constant", "Acceleration");
         keyMapping.put("one_way", "One way");
         keyMapping.put("name", "Name");
         keyMapping.put("route_ids", "Route(s)");
@@ -116,16 +121,16 @@ public class MTRLoggingManager {
         return keyMapping.getOrDefault(fieldName, fieldName);
     }
 
-    public String getPossibleFriendlyValue(String className, String fieldName, String value, World world) {
+    public String tryGetFriendlyValue(String className, String fieldName, String value, World world) {
         if(value.isEmpty()) {
             return "(None)";
         }
-        if (Objects.equals(value, "true") || Objects.equals(value, "false")) {
-            if (value.equals("true")) return "Yes";
-            if (value.equals("false")) return "No";
-        }
-        if (Objects.equals(fieldName, "acceleration_constant")) {
-            return String.valueOf(Double.parseDouble(value) * 10 * TICK_PER_SECOND * 3.6);
+        if (value.equals("true") || value.equals("false")) {
+            if (value.equals("true")) {
+                return "Yes";
+            } else {
+                return "No";
+            }
         }
         if(fieldName.equals("name")) {
             return IGui.formatStationName(value);
@@ -151,28 +156,36 @@ public class MTRLoggingManager {
             long offset = System.currentTimeMillis() / Depot.MILLISECONDS_PER_DAY * Depot.MILLISECONDS_PER_DAY;
             StringBuilder resultStr = new StringBuilder();
             String[] departures = value.substring(1, value.length() - 1).split(",");
-            int entryLimit = 35;
+            boolean lastEntryHasSameGap = false;
 
             Long lastDeparture = null;
+            String gapString = null;
             int i = 0;
             for(String departure : departures) {
-                if(i >= entryLimit) {
-                    resultStr.append("\\n").append("...");
-                    break;
-                }
+                boolean isFirstEntry = i == 0;
+                boolean isLastEntry = i == departures.length - 1;
                 long depTime = Long.parseLong(departure);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(depTime + offset);
                 int hour = calendar.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar.get(Calendar.MINUTE);
                 int second = calendar.get(Calendar.SECOND);
-                String hms = String.format("%02d:%02d:%02d", hour, minute, second);
-                resultStr.append("\\n").append(hms);
 
-                if(lastDeparture != null) {
-                    resultStr.append(" (").append(Util.getTimeDuration(lastDeparture, depTime)).append(" gap)");
+                String newGapString = lastDeparture == null ? "" : Util.getTimeDuration(lastDeparture, depTime);
+                String hms = String.format("%02d:%02d:%02d", hour, minute, second);
+
+                if(isLastEntry || (gapString != null && !gapString.equals(newGapString))) {
+                    resultStr.append("\\n").append(hms);
+                    resultStr.append(" (").append(newGapString).append(" gap)");
+                    lastEntryHasSameGap = false;
+                } else {
+                    if(!lastEntryHasSameGap && !isFirstEntry) {
+                        lastEntryHasSameGap = true;
+                        resultStr.append("\\n").append("...");
+                    }
                 }
 
+                gapString = newGapString;
                 lastDeparture = depTime;
                 i++;
             }
@@ -226,10 +239,21 @@ public class MTRLoggingManager {
             return resultStr.toString();
         }
 
+        if(fieldName.equals("color")) {
+            int val = Integer.parseInt(value);
+            Color color = new Color(val);
+
+            return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()).toUpperCase();
+        }
+
         if(fieldName.equals("acceleration_constant")) {
             double val = Double.parseDouble(value);
+            double ms = val * 2 * 10 * TICK_PER_SECOND;
+            double kmh = ms * 3.6;
             DecimalFormat df = new DecimalFormat("#.#");
-            return df.format(val * 2) + " km/h/s";
+            String kmhString = df.format(kmh) + " km/h/s";
+            String msString = df.format(ms) + " m/s²";
+            return String.format("%s (%s)", msString, kmhString);
         }
 
         return value;
@@ -288,7 +312,7 @@ public class MTRLoggingManager {
             String key = str.split(":")[0].replace("\"", "");
             String value = str.split(":")[1].replace("\"", "");
             String friendlyKey = getFriendlyKeyName(key);
-            String friendlyValue = getPossibleFriendlyValue(className, key, value, player.world);
+            String friendlyValue = tryGetFriendlyValue(className, key, value, player.world);
             oldDatas.append(friendlyKey).append(": ").append("**").append(friendlyValue).append("**").append("\\n");
         }
         embed.addField("Before", oldDatas.toString(), false);
@@ -302,7 +326,7 @@ public class MTRLoggingManager {
             String key = str.split(":")[0].replace("\"", "");
             String value = str.split(":")[1].replace("\"", "");
             String friendlyKey = getFriendlyKeyName(key);
-            String friendlyValue = getPossibleFriendlyValue(className, key, value, player.world);
+            String friendlyValue = tryGetFriendlyValue(className, key, value, player.world);
             newDatas.append(friendlyKey).append(": ").append("**").append(friendlyValue).append("**").append("\\n");
         }
         embed.addField("After", newDatas.toString(), false);
