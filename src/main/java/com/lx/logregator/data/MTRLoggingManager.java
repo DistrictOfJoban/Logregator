@@ -1,5 +1,6 @@
 package com.lx.logregator.data;
 
+import com.google.gson.*;
 import com.lx.logregator.config.LogregatorConfig;
 import com.lx.logregator.data.event.EventType;
 import com.lx.logregator.data.webhook.DiscordEmbed;
@@ -121,7 +122,7 @@ public class MTRLoggingManager {
         return keyMapping.getOrDefault(fieldName, fieldName);
     }
 
-    public String tryGetFriendlyValue(String className, String fieldName, String value, World world) {
+    public String tryGetFriendlyValue(String className, String fieldName, String rawValue, String value, World world) {
         if(value.isEmpty()) {
             return "(None)";
         }
@@ -256,6 +257,24 @@ public class MTRLoggingManager {
             return String.format("%s (%s)", msString, kmhString);
         }
 
+        if(fieldName.equals("exits")) {
+            JsonObject jsonObject = new JsonParser().parse(rawValue).getAsJsonObject();
+            StringBuilder finalString = new StringBuilder();
+            for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                String exitNumber = entry.getKey();
+                JsonArray exitDestination = entry.getValue().getAsJsonArray();
+                finalString.append("\n").append(exitNumber);
+
+                if(exitDestination.size() > 0) {
+                    for(JsonElement jsonElement : exitDestination) {
+                        String exitDestinationStr = IGui.formatStationName(jsonElement.getAsString());
+                        finalString.append("\n").append(" ").append(exitDestinationStr);
+                    }
+                }
+            }
+            return finalString.toString();
+        }
+
         return value;
     }
 
@@ -309,10 +328,12 @@ public class MTRLoggingManager {
             oldDatas.append("N/A");
         }
         for(String str : oldDataDiff) {
-            String key = str.split(":")[0].replace("\"", "");
-            String value = str.split(":")[1].replace("\"", "");
+            String rawKey = str.split(":")[0];
+            String key = rawKey.replace("\"", "");
+            String rawValue = str.substring(rawKey.length() + 1);
+            String value = rawValue.replace("\"", "");
             String friendlyKey = getFriendlyKeyName(key);
-            String friendlyValue = tryGetFriendlyValue(className, key, value, player.world);
+            String friendlyValue = tryGetFriendlyValue(className, key, rawValue, value, player.world);
             oldDatas.append(friendlyKey).append(": ").append("**").append(friendlyValue).append("**").append("\n");
         }
         embed.addField("Before", oldDatas.toString(), false);
@@ -323,10 +344,12 @@ public class MTRLoggingManager {
             newDatas.append("N/A");
         }
         for(String str : newDataDiff) {
-            String key = str.split(":")[0].replace("\"", "");
-            String value = str.split(":")[1].replace("\"", "");
+            String rawKey = str.split(":")[0];
+            String key = rawKey.replace("\"", "");
+            String rawValue = str.substring(rawKey.length() + 1);
+            String value = rawValue.replace("\"", "");
             String friendlyKey = getFriendlyKeyName(key);
-            String friendlyValue = tryGetFriendlyValue(className, key, value, player.world);
+            String friendlyValue = tryGetFriendlyValue(className, key, rawValue, value, player.world);
             newDatas.append(friendlyKey).append(": ").append("**").append(friendlyValue).append("**").append("\n");
         }
         embed.addField("After", newDatas.toString(), false);
