@@ -1,5 +1,7 @@
 package com.lx.logregator.data.webhook;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.lx.logregator.config.LogregatorConfig;
 import com.lx.logregator.data.event.EventType;
 
@@ -59,21 +61,21 @@ public class DiscordWebhook implements Webhook {
             throw new IllegalArgumentException("Set content or add at least one EmbedObject");
         }
 
-        JSONObject json = new JSONObject();
+        JsonObject json = new JsonObject();
 
-        json.put("content", this.content);
-        json.put("username", this.username);
-        json.put("avatar_url", this.avatarUrl);
-        json.put("tts", this.tts);
+        json.addProperty("content", this.content);
+        json.addProperty("username", this.username);
+        json.addProperty("avatar_url", this.avatarUrl);
+        json.addProperty("tts", this.tts);
 
         if (!this.embeds.isEmpty()) {
-            List<JSONObject> embedObjects = new ArrayList<>();
+            JsonArray embedArray = new JsonArray();
             for (Embed embed : this.embeds) {
-                JSONObject jsonEmbed = embed.toJson();
-                embedObjects.add(jsonEmbed);
+                JsonObject jsonEmbed = embed.toJson();
+                embedArray.add(jsonEmbed);
             }
 
-            json.put("embeds", embedObjects.toArray());
+            json.add("embeds", embedArray);
         }
 
         String requestURL = this.url;

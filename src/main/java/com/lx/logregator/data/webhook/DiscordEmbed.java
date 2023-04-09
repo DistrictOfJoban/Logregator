@@ -1,5 +1,8 @@
 package com.lx.logregator.data.webhook;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -115,22 +118,22 @@ public class DiscordEmbed implements Embed {
     }
 
     @Override
-    public DiscordWebhook.JSONObject toJson() {
-        DiscordWebhook.JSONObject jsonEmbed = new DiscordWebhook.JSONObject();
+    public JsonObject toJson() {
+        JsonObject jsonEmbed = new JsonObject();
 
-        jsonEmbed.put("title", title);
-        jsonEmbed.put("description", description);
-        jsonEmbed.put("timestamp", timestamp);
-        jsonEmbed.put("url", url);
+        jsonEmbed.addProperty("title", title);
+        jsonEmbed.addProperty("description", description);
+        jsonEmbed.addProperty("timestamp", timestamp);
+        jsonEmbed.addProperty("url", url);
 
-        if(timestamp != null) jsonEmbed.put("timestamp", timestamp);
+        if(timestamp != null) jsonEmbed.addProperty("timestamp", timestamp);
 
         if (color != null) {
             int rgb = color.getRed();
             rgb = (rgb << 8) + color.getGreen();
             rgb = (rgb << 8) + color.getBlue();
 
-            jsonEmbed.put("color", rgb);
+            jsonEmbed.addProperty("color", rgb);
         }
 
         Embed.Footer footer = getFooter();
@@ -140,48 +143,48 @@ public class DiscordEmbed implements Embed {
         List<Embed.Field> fields = getFields();
 
         if (footer != null) {
-            DiscordWebhook.JSONObject jsonFooter = new DiscordWebhook.JSONObject();
+            JsonObject jsonFooter = new JsonObject();
 
-            jsonFooter.put("text", footer.getText());
-            jsonFooter.put("icon_url", footer.getIconUrl());
-            jsonEmbed.put("footer", jsonFooter);
+            jsonFooter.addProperty("text", footer.getText());
+            jsonFooter.addProperty("icon_url", footer.getIconUrl());
+            jsonEmbed.add("footer", jsonFooter);
         }
 
         if (image != null) {
-            DiscordWebhook.JSONObject jsonImage = new DiscordWebhook.JSONObject();
+            JsonObject jsonImage = new JsonObject();
 
-            jsonImage.put("url", image.getUrl());
-            jsonEmbed.put("image", jsonImage);
+            jsonImage.addProperty("url", image.getUrl());
+            jsonEmbed.add("image", jsonImage);
         }
 
         if (thumbnail != null) {
-            DiscordWebhook.JSONObject jsonThumbnail = new DiscordWebhook.JSONObject();
+            JsonObject jsonThumbnail = new JsonObject();
 
-            jsonThumbnail.put("url", thumbnail.getUrl());
-            jsonEmbed.put("thumbnail", jsonThumbnail);
+            jsonThumbnail.addProperty("url", thumbnail.getUrl());
+            jsonEmbed.add("thumbnail", jsonThumbnail);
         }
 
         if (author != null) {
-            DiscordWebhook.JSONObject jsonAuthor = new DiscordWebhook.JSONObject();
+            JsonObject jsonAuthor = new JsonObject();
 
-            jsonAuthor.put("name", author.getName());
-            jsonAuthor.put("url", author.getUrl());
-            jsonAuthor.put("icon_url", author.getIconUrl());
-            jsonEmbed.put("author", jsonAuthor);
+            jsonAuthor.addProperty("name", author.getName());
+            jsonAuthor.addProperty("url", author.getUrl());
+            jsonAuthor.addProperty("icon_url", author.getIconUrl());
+            jsonEmbed.add("author", jsonAuthor);
         }
 
-        List<DiscordWebhook.JSONObject> jsonFields = new ArrayList<>();
+        JsonArray jsonArray = new JsonArray();
         for (Embed.Field field : fields) {
-            DiscordWebhook.JSONObject jsonField = new DiscordWebhook.JSONObject();
+            JsonObject jsonField = new JsonObject();
 
-            jsonField.put("name", field.getName());
-            jsonField.put("value", field.getValue());
-            jsonField.put("inline", field.isInline());
+            jsonField.addProperty("name", field.getName());
+            jsonField.addProperty("value", field.getValue());
+            jsonField.addProperty("inline", field.isInline());
 
-            jsonFields.add(jsonField);
+            jsonArray.add(jsonField);
         }
 
-        jsonEmbed.put("fields", jsonFields.toArray());
+        jsonEmbed.add("fields", jsonArray);
         return jsonEmbed;
     }
 }

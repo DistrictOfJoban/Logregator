@@ -1,5 +1,7 @@
 package com.lx.logregator.data.webhook;
 
+import com.google.gson.JsonObject;
+
 import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -114,27 +116,27 @@ public class RevoltEmbed implements Embed {
     }
 
     @Override
-    public DiscordWebhook.JSONObject toJson() {
-        DiscordWebhook.JSONObject jsonEmbed = new DiscordWebhook.JSONObject();
+    public JsonObject toJson() {
+        JsonObject jsonEmbed = new JsonObject();
 
-        jsonEmbed.put("type", "Text");
-        jsonEmbed.put("title", title);
-        jsonEmbed.put("description", getDisplayedDescription());
-        jsonEmbed.put("url", url);
+        jsonEmbed.addProperty("type", "Text");
+        jsonEmbed.addProperty("title", title);
+        jsonEmbed.addProperty("description", getDisplayedDescription());
+        jsonEmbed.addProperty("url", url);
 
         if (color != null) {
             int r = color.getRed();
             int g = color.getGreen();
             int b = color.getBlue();
 
-            jsonEmbed.put("colour", "rgb(" + r + "," + g + "," + b + ")");
+            jsonEmbed.addProperty("colour", "rgb(" + r + "," + g + "," + b + ")");
         }
 
 //        Embed.Footer footer = getFooter();
 //        Embed.Image image = getImage();
 //
 //        if (footer != null) {
-//            DiscordWebhook.JSONObject jsonFooter = new DiscordWebhook.JSONObject();
+//            JsonObject jsonFooter = new JsonObject();
 //
 //            jsonFooter.put("text", footer.getText());
 //            jsonFooter.put("icon_url", footer.getIconUrl());
@@ -142,7 +144,7 @@ public class RevoltEmbed implements Embed {
 //        }
 //
 //        if (image != null) {
-//            DiscordWebhook.JSONObject jsonImage = new DiscordWebhook.JSONObject();
+//            JsonObject jsonImage = new JsonObject();
 //
 //            jsonImage.put("url", image.getUrl());
 //            jsonEmbed.put("image", jsonImage);

@@ -144,7 +144,7 @@ public class MTRLoggingManager {
                 if(frequency.isEmpty()) continue;
 
                 int freq = Integer.parseInt(frequency);
-                newString.append("\\n").append("[" + Util.padZero(i) + ":00-" + Util.padZero(i) + ":59] ").append(freq * 0.25).append("/hr");
+                newString.append("\n").append("[" + Util.padZero(i) + ":00-" + Util.padZero(i) + ":59] ").append(freq * 0.25).append("/hr");
                 i++;
             }
             return newString.toString();
@@ -175,13 +175,13 @@ public class MTRLoggingManager {
                 String hms = String.format("%02d:%02d:%02d", hour, minute, second);
 
                 if(isLastEntry || (gapString != null && !gapString.equals(newGapString))) {
-                    resultStr.append("\\n").append(hms);
+                    resultStr.append("\n").append(hms);
                     resultStr.append(" (").append(newGapString).append(" gap)");
                     lastEntryHasSameGap = false;
                 } else {
                     if(!lastEntryHasSameGap && !isFirstEntry) {
                         lastEntryHasSameGap = true;
-                        resultStr.append("\\n").append("...");
+                        resultStr.append("\n").append("...");
                     }
                 }
 
@@ -210,7 +210,7 @@ public class MTRLoggingManager {
                 long routeId = Long.parseLong(routeIdStr);
                 Route route = data.dataCache.routeIdMap.get(routeId);
                 if(route != null) {
-                    resultStr.append("\\n").append(IGui.formatStationName(route.name));
+                    resultStr.append("\n").append(IGui.formatStationName(route.name));
                 }
             }
             return resultStr.toString();
@@ -233,7 +233,7 @@ public class MTRLoggingManager {
                 Platform platform = data.dataCache.platformIdMap.get(platformId);
                 if(platform != null) {
                     String platformString = " (" + platform.name + ")";
-                    resultStr.append("\\n").append(stnName).append(platformString);
+                    resultStr.append("\n").append(stnName).append(platformString);
                 }
             }
             return resultStr.toString();
@@ -313,7 +313,7 @@ public class MTRLoggingManager {
             String value = str.split(":")[1].replace("\"", "");
             String friendlyKey = getFriendlyKeyName(key);
             String friendlyValue = tryGetFriendlyValue(className, key, value, player.world);
-            oldDatas.append(friendlyKey).append(": ").append("**").append(friendlyValue).append("**").append("\\n");
+            oldDatas.append(friendlyKey).append(": ").append("**").append(friendlyValue).append("**").append("\n");
         }
         embed.addField("Before", oldDatas.toString(), false);
 
@@ -327,7 +327,7 @@ public class MTRLoggingManager {
             String value = str.split(":")[1].replace("\"", "");
             String friendlyKey = getFriendlyKeyName(key);
             String friendlyValue = tryGetFriendlyValue(className, key, value, player.world);
-            newDatas.append(friendlyKey).append(": ").append("**").append(friendlyValue).append("**").append("\\n");
+            newDatas.append(friendlyKey).append(": ").append("**").append(friendlyValue).append("**").append("\n");
         }
         embed.addField("After", newDatas.toString(), false);
 
@@ -339,7 +339,7 @@ public class MTRLoggingManager {
             StringBuilder sb = new StringBuilder();
             int i = 0;
             for(BlockPos pos : positions) {
-                sb.append(String.format("%d. **[%d, %d, %d]**", i+1, pos.getX(), pos.getY(), pos.getZ())).append("\\n");
+                sb.append(String.format("%d. **[%d, %d, %d]**", i+1, pos.getX(), pos.getY(), pos.getZ())).append("\n");
                 i++;
             }
             embed.addField("Block Positions", sb.toString(), false);

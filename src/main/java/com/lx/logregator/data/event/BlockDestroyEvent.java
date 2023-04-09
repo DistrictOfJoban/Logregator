@@ -33,7 +33,7 @@ public class BlockDestroyEvent extends Event {
         webhook.addEmbed(new DiscordEmbed()
                 .setAuthor(player.getGameProfile().getName(), null, "https://minotar.net/avatar/" + player.getGameProfile().getName() + "/16")
                 .setTitle(":warning: Player destroyed block")
-                .setDescription(String.format("Player %s broke a **%s** at %s\\nStanding at: `%s`", player.getGameProfile().getName(), affectedBlockId, Util.formatBlockPos(pos), Util.formatBlockPos(player.getBlockPos())))
+                .setDescription(String.format("Player %s broke a **%s** at %s\nStanding at: `%s`", player.getGameProfile().getName(), affectedBlockId, Util.formatBlockPos(pos), Util.formatBlockPos(player.getBlockPos())))
                 .setTimestamp()
         );
         try {

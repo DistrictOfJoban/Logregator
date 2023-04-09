@@ -1,5 +1,7 @@
 package com.lx.logregator.data.webhook;
 
+import com.google.gson.JsonObject;
+
 import java.awt.*;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +28,7 @@ public interface Embed {
     Embed setTimestamp();
     Embed setTimestamp(Date date);
     Embed addField(String name, String value, boolean inline);
-    DiscordWebhook.JSONObject toJson();
+    JsonObject toJson();
 
     class Footer {
         private String text;

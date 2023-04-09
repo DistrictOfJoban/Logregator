@@ -28,7 +28,7 @@ public class FilteredItemEvent extends Event {
         webhook.addEmbed(new DiscordEmbed()
                 .setAuthor(player.getGameProfile().getName(), null, "https://minotar.net/avatar/" + player.getGameProfile().getName() + "/16")
                 .setTitle(":warning: Filtered Items in Player's inventory")
-                .setDescription(String.format("Player %s has obtained ** %s **\\nStanding at: %s", player.getGameProfile().getName(), itemIdentifier, Util.formatBlockPos(player.getBlockPos())))
+                .setDescription(String.format("Player %s has obtained ** %s **\nStanding at: %s", player.getGameProfile().getName(), itemIdentifier, Util.formatBlockPos(player.getBlockPos())))
                 .setTimestamp()
         );
         try {
