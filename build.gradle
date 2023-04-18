@@ -11,7 +11,7 @@ targetCompatibility = JavaVersion.VERSION_16
 version = project.mod_version
 group = project.maven_group
 
-def default_minecraft_version = "1.17.1"
+def default_minecraft_version = "1.19.2"
 def minecraft_version = project.properties.containsKey("buildVersion") ? project.getProperties().get("buildVersion") : default_minecraft_version
 def minecraft_major_version = minecraft_version.split("\\.")[0] as int // Always return 1, unless mojang goes haywire :P
 def minecraft_main_version = minecraft_version.split("\\.")[1] as int
@@ -169,7 +169,7 @@ publishing {
 static def getModrinthVersion(loader, minecraftVersion, projectId) {
 	def versionsArray = new JsonSlurper().parse(("https://api.modrinth.com/v2/project/" + projectId + "/version").toURL())
 	for (def versionElement : versionsArray) {
-		if (versionElement["loaders"].contains(loader) && versionElement["game_versions"].contains(minecraftVersion)) {
+		if (versionElement["loaders"].contains(loader) && versionElement["version_type"] == "release" && versionElement["game_versions"].contains(minecraftVersion)) {
 			return versionElement["version_number"]
 		}
 	}
