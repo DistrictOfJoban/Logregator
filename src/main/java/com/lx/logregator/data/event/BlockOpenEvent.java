@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class BlockPlaceEvent extends Event {
+public class BlockOpenEvent extends Event {
     private final String blockId;
     private final Area area;
-    public BlockPlaceEvent(String blockId, Area area, List<Integer> permLevel) {
+    public BlockOpenEvent(String blockId, Area area, List<Integer> permLevel) {
         super(permLevel);
         this.blockId = blockId;
         this.area = area;
@@ -35,8 +35,8 @@ public class BlockPlaceEvent extends Event {
         DiscordWebhook webhook = new DiscordWebhook(LogregatorConfig.webhookUrl);
         webhook.addEmbed(new DiscordEmbed()
                 .setAuthor(player.getGameProfile().getName(), null, "https://minotar.net/avatar/" + player.getGameProfile().getName() + "/16")
-                .setTitle(":warning: Player placed block")
-                .setDescription(String.format("Player %s placed a **%s** at %s\nStanding at: `%s`", player.getGameProfile().getName(), affectedBlockId, Util.formatBlockPos(pos), Util.formatBlockPos(player.getBlockPos())))
+                .setTitle(":warning: Player opened block")
+                .setDescription(String.format("Player %s opened a a **%s** at %s\nStanding at: `%s`", player.getGameProfile().getName(), affectedBlockId, Util.formatBlockPos(pos), Util.formatBlockPos(player.getBlockPos())))
                 .setTimestamp()
         );
         try {
@@ -45,7 +45,7 @@ public class BlockPlaceEvent extends Event {
         }
     }
 
-    public static BlockPlaceEvent fromJson(JsonElement json) {
+    public static BlockOpenEvent fromJson(JsonElement json) {
         JsonObject object = json.getAsJsonObject();
         String blockId;
         if(object.has("blockId")) {
@@ -65,6 +65,6 @@ public class BlockPlaceEvent extends Event {
             permLevel.addAll(Util.fromJsonArray(object.get("permLevel").getAsJsonArray()));
         }
 
-        return new BlockPlaceEvent(blockId, area, permLevel);
+        return new BlockOpenEvent(blockId, area, permLevel);
     }
 }

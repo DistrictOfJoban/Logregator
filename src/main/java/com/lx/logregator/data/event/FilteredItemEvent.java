@@ -1,5 +1,7 @@
 package com.lx.logregator.data.event;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.lx.logregator.Util;
 import com.lx.logregator.config.LogregatorConfig;
 import com.lx.logregator.data.webhook.DiscordEmbed;
@@ -8,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,8 +35,20 @@ public class FilteredItemEvent extends Event {
                 .setTimestamp()
         );
         try {
-            webhook.send(EventType.FILTERED_ITEM);
+            webhook.send();
         } catch (IOException ignored) {
         }
+    }
+
+    public static FilteredItemEvent fromJson(JsonElement json) {
+        JsonObject object = json.getAsJsonObject();
+        if(!object.has("itemId")) return null;
+        String id = object.get("itemId").getAsString();
+        List<Integer> permLevel = new ArrayList<>();
+        if(object.has("permLevel")) {
+            permLevel.addAll(Util.fromJsonArray(object.get("permLevel").getAsJsonArray()));
+        }
+
+        return new FilteredItemEvent(id, permLevel);
     }
 }

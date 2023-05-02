@@ -1,5 +1,7 @@
 package com.lx.logregator.data.event;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.lx.logregator.Util;
 import com.lx.logregator.config.LogregatorConfig;
 import com.lx.logregator.data.Area;
@@ -10,10 +12,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class BlockDestroyEvent extends Event {
+    private static final EventType type = EventType.BLOCK_BREAK;
     private final String blockId;
     private final Area area;
     public BlockDestroyEvent(String blockId, Area area, List<Integer> permLevel) {
@@ -37,8 +41,31 @@ public class BlockDestroyEvent extends Event {
                 .setTimestamp()
         );
         try {
-            webhook.send(EventType.BLOCK_BREAK);
+            webhook.send();
         } catch (IOException ignored) {
         }
+    }
+
+    public static BlockDestroyEvent fromJson(JsonElement json) {
+        JsonObject object = json.getAsJsonObject();
+        String blockId;
+        if(object.has("blockId")) {
+            blockId = object.get("blockId").getAsString();
+        } else {
+            blockId = null;
+        }
+        Area area;
+        if(object.has("area")) {
+            area = new Area(object.get("area").getAsJsonObject());
+        } else {
+            area = null;
+        }
+
+        List<Integer> permLevel = new ArrayList<>();
+        if(object.has("permLevel")) {
+            permLevel.addAll(Util.fromJsonArray(object.get("permLevel").getAsJsonArray()));
+        }
+
+        return new BlockDestroyEvent(blockId, area, permLevel);
     }
 }

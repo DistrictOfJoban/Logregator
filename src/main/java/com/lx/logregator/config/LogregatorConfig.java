@@ -4,10 +4,7 @@ import com.google.gson.*;
 import com.lx.logregator.Logregator;
 import com.lx.logregator.Util;
 import com.lx.logregator.data.Area;
-import com.lx.logregator.data.event.BlockDestroyEvent;
-import com.lx.logregator.data.event.BlockPlaceEvent;
-import com.lx.logregator.data.event.EventType;
-import com.lx.logregator.data.event.FilteredItemEvent;
+import com.lx.logregator.data.event.*;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.nio.file.Files;
@@ -21,6 +18,7 @@ public class LogregatorConfig {
     public static final List<FilteredItemEvent> filteredItems = new ArrayList<>();
     public static final List<BlockDestroyEvent> blockBreak = new ArrayList<>();
     public static final List<BlockPlaceEvent> blockPlace = new ArrayList<>();
+    public static final List<BlockOpenEvent> blockOpen = new ArrayList<>();
     public static String webhookUrl;
 
     public static boolean load() {
@@ -28,6 +26,7 @@ public class LogregatorConfig {
         filteredItems.clear();
         blockBreak.clear();
         blockPlace.clear();
+        blockOpen.clear();
         if(!Files.exists(CONFIG_PATH)) {
             Logregator.LOGGER.warn("[Logregator] Config file not found, generating one...");
             write();
@@ -42,80 +41,44 @@ public class LogregatorConfig {
                 webhookUrl = jsonConfig.get("webhook").getAsString();
             }
 
-            if(jsonConfig.has("filteredItems")) {
-                jsonConfig.getAsJsonArray("filteredItems").forEach(e -> {
-                    JsonObject object = e.getAsJsonObject();
-                    if(!object.has("itemId")) return;
-                    String id = object.get("itemId").getAsString();
-                    List<Integer> permLevel = new ArrayList<>();
-                    if(object.has("permLevel")) {
-                        permLevel.addAll(Util.fromJsonArray(object.get("permLevel").getAsJsonArray()));
-                    }
+            if(jsonConfig.has("events")) {
+                JsonObject eventObject = jsonConfig.getAsJsonObject("events");
 
-                    filteredItems.add(new FilteredItemEvent(id, permLevel));
-                });
-                subscribedEvent.add(EventType.FILTERED_ITEM);
-            }
+                if(eventObject.has("filteredItems")) {
+                    eventObject.getAsJsonArray("filteredItems").forEach(e -> {
+                        filteredItems.add(FilteredItemEvent.fromJson(e));
+                    });
+                    subscribedEvent.add(EventType.FILTERED_ITEM);
+                }
 
-            if(jsonConfig.has("blockBreak")) {
-                jsonConfig.getAsJsonArray("blockBreak").forEach(e -> {
-                    JsonObject object = e.getAsJsonObject();
-                    String blockId;
-                    if(object.has("blockId")) {
-                        blockId = object.get("blockId").getAsString();
-                    } else {
-                        blockId = null;
-                    }
-                    Area area;
-                    if(object.has("area")) {
-                        area = new Area(object.get("area").getAsJsonObject());
-                    } else {
-                        area = null;
-                    }
+                if(eventObject.has("blockBreak")) {
+                    eventObject.getAsJsonArray("blockBreak").forEach(e -> {
+                        blockBreak.add(BlockDestroyEvent.fromJson(e));
+                    });
+                    subscribedEvent.add(EventType.BLOCK_BREAK);
+                }
 
-                    List<Integer> permLevel = new ArrayList<>();
-                    if(object.has("permLevel")) {
-                        permLevel.addAll(Util.fromJsonArray(object.get("permLevel").getAsJsonArray()));
-                    }
+                if(eventObject.has("blockOpen")) {
+                    eventObject.getAsJsonArray("blockOpen").forEach(e -> {
+                        blockOpen.add(BlockOpenEvent.fromJson(e));
+                    });
+                    subscribedEvent.add(EventType.BLOCK_OPEN);
+                }
 
-                    blockBreak.add(new BlockDestroyEvent(blockId, area, permLevel));
-                });
-                subscribedEvent.add(EventType.BLOCK_BREAK);
-            }
+                if(eventObject.has("blockPlace")) {
+                    eventObject.getAsJsonArray("blockPlace").forEach(e -> {
+                        blockPlace.add(BlockPlaceEvent.fromJson(e));
+                    });
+                    subscribedEvent.add(EventType.BLOCK_PLACE);
+                }
 
-            if(jsonConfig.has("blockPlace")) {
-                jsonConfig.getAsJsonArray("blockPlace").forEach(e -> {
-                    JsonObject object = e.getAsJsonObject();
-                    String blockId;
-                    if(object.has("blockId")) {
-                        blockId = object.get("blockId").getAsString();
-                    } else {
-                        blockId = null;
-                    }
+                if(eventObject.has("mtr")) {
+                    boolean logBlock = eventObject.get("mtr").getAsJsonObject().get("logBlock").getAsBoolean();
+                    boolean logRailwayData = eventObject.get("mtr").getAsJsonObject().get("logRailwayData").getAsBoolean();
 
-                    Area area;
-                    if(object.has("area")) {
-                        area = new Area(object.get("area").getAsJsonObject());
-                    } else {
-                        area = null;
-                    }
-
-                    List<Integer> permLevel = new ArrayList<>();
-                    if(object.has("permLevel")) {
-                        permLevel.addAll(Util.fromJsonArray(object.get("permLevel").getAsJsonArray()));
-                    }
-
-                    blockPlace.add(new BlockPlaceEvent(blockId, area, permLevel));
-                });
-                subscribedEvent.add(EventType.BLOCK_PLACE);
-            }
-
-            if(jsonConfig.has("mtr")) {
-                boolean logBlock = jsonConfig.get("mtr").getAsJsonObject().get("logBlock").getAsBoolean();
-                boolean logRailwayData = jsonConfig.get("mtr").getAsJsonObject().get("logRailwayData").getAsBoolean();
-
-                if(logBlock) subscribedEvent.add(EventType.MTR_BLOCK);
-                if(logRailwayData) subscribedEvent.add(EventType.MTR_DATA);
+                    if(logBlock) subscribedEvent.add(EventType.MTR_BLOCK);
+                    if(logRailwayData) subscribedEvent.add(EventType.MTR_DATA);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,6 +2,7 @@ package com.lx.logregator;
 
 import com.lx.logregator.config.LogregatorConfig;
 import com.lx.logregator.data.event.BlockDestroyEvent;
+import com.lx.logregator.data.event.BlockOpenEvent;
 import com.lx.logregator.data.event.BlockPlaceEvent;
 import com.lx.logregator.data.event.FilteredItemEvent;
 import net.minecraft.entity.Entity;
@@ -33,6 +34,11 @@ public class EventAction {
         }
         if(gameEvent == GameEvent.BLOCK_PLACE) {
             for(BlockPlaceEvent entry : LogregatorConfig.blockPlace) {
+                entry.send(player, pos, null);
+            }
+        }
+        if(gameEvent == GameEvent.BLOCK_OPEN) {
+            for(BlockOpenEvent entry : LogregatorConfig.blockOpen) {
                 entry.send(player, pos, null);
             }
         }

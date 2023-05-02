@@ -20,5 +20,5 @@ public interface Webhook {
 
     void addEmbed(Embed embed);
 
-    void send(EventType eventType) throws IOException;
+    void send() throws IOException;
 }

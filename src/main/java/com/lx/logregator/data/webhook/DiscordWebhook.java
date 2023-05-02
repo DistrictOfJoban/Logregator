@@ -55,8 +55,7 @@ public class DiscordWebhook implements Webhook {
         this.embeds.add(embed);
     }
 
-    public void send(EventType eventType) throws IOException {
-        if(!LogregatorConfig.subscribedEvent.contains(eventType)) return;
+    public void send() throws IOException {
         if (this.content == null && this.embeds.isEmpty()) {
             throw new IllegalArgumentException("Set content or add at least one EmbedObject");
         }

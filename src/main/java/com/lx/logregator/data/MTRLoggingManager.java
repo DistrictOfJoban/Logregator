@@ -374,7 +374,7 @@ public class MTRLoggingManager {
         if(color != null) embed.setColor(new Color(color));
         webhook.addEmbed(embed);
         try {
-            webhook.send(eventType);
+            webhook.send();
         } catch (Exception e) {
             e.printStackTrace();
         }
