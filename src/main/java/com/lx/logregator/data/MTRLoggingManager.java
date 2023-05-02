@@ -2,7 +2,6 @@ package com.lx.logregator.data;
 
 import com.google.gson.*;
 import com.lx.logregator.config.LogregatorConfig;
-import com.lx.logregator.data.event.EventType;
 import com.lx.logregator.data.webhook.DiscordEmbed;
 import com.lx.logregator.data.webhook.DiscordWebhook;
 import com.lx.logregator.Util;
@@ -319,7 +318,11 @@ public class MTRLoggingManager {
 
     private void processMTREvent(ServerPlayerEntity player, Class<?> dataClass, long id, String name, List<String> oldData, List<String> newData, List<String> oldDataDiff, List<String> newDataDiff, BlockPos[] positions, MTRActionType actionType) {
         String className = dataClass.getName();
-        EventType eventType = className.contains(".block.") || className.contains(".blocks.") || className.contains("$TileEntity") ? EventType.MTR_BLOCK : EventType.MTR_DATA;
+
+        boolean isBlock = className.contains(".block.") || className.contains(".blocks.") || className.contains("$TileEntity");
+        boolean isData = !isBlock;
+        if(isBlock && !LogregatorConfig.logMTRBlocks) return;
+        if(isData && !LogregatorConfig.logMTRData) return;
         DiscordWebhook webhook = new DiscordWebhook(LogregatorConfig.webhookUrl);
         DiscordEmbed embed = new DiscordEmbed();
 

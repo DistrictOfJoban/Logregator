@@ -2,8 +2,6 @@ package com.lx.logregator.config;
 
 import com.google.gson.*;
 import com.lx.logregator.Logregator;
-import com.lx.logregator.Util;
-import com.lx.logregator.data.Area;
 import com.lx.logregator.data.event.*;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -14,15 +12,15 @@ import java.util.*;
 
 public class LogregatorConfig {
     private static final Path CONFIG_PATH = Paths.get(FabricLoader.getInstance().getConfigDir().toString(), "logregator", "config.json");
-    public static final List<EventType> subscribedEvent = new ArrayList<>();
     public static final List<FilteredItemEvent> filteredItems = new ArrayList<>();
     public static final List<BlockDestroyEvent> blockBreak = new ArrayList<>();
     public static final List<BlockPlaceEvent> blockPlace = new ArrayList<>();
     public static final List<BlockOpenEvent> blockOpen = new ArrayList<>();
+    public static boolean logMTRBlocks = false;
+    public static boolean logMTRData = false;
     public static String webhookUrl;
 
     public static boolean load() {
-        subscribedEvent.clear();
         filteredItems.clear();
         blockBreak.clear();
         blockPlace.clear();
@@ -48,36 +46,32 @@ public class LogregatorConfig {
                     eventObject.getAsJsonArray("filteredItems").forEach(e -> {
                         filteredItems.add(FilteredItemEvent.fromJson(e));
                     });
-                    subscribedEvent.add(EventType.FILTERED_ITEM);
                 }
 
                 if(eventObject.has("blockBreak")) {
                     eventObject.getAsJsonArray("blockBreak").forEach(e -> {
                         blockBreak.add(BlockDestroyEvent.fromJson(e));
                     });
-                    subscribedEvent.add(EventType.BLOCK_BREAK);
                 }
 
                 if(eventObject.has("blockOpen")) {
                     eventObject.getAsJsonArray("blockOpen").forEach(e -> {
                         blockOpen.add(BlockOpenEvent.fromJson(e));
                     });
-                    subscribedEvent.add(EventType.BLOCK_OPEN);
                 }
 
                 if(eventObject.has("blockPlace")) {
                     eventObject.getAsJsonArray("blockPlace").forEach(e -> {
                         blockPlace.add(BlockPlaceEvent.fromJson(e));
                     });
-                    subscribedEvent.add(EventType.BLOCK_PLACE);
                 }
 
                 if(eventObject.has("mtr")) {
                     boolean logBlock = eventObject.get("mtr").getAsJsonObject().get("logBlock").getAsBoolean();
                     boolean logRailwayData = eventObject.get("mtr").getAsJsonObject().get("logRailwayData").getAsBoolean();
 
-                    if(logBlock) subscribedEvent.add(EventType.MTR_BLOCK);
-                    if(logRailwayData) subscribedEvent.add(EventType.MTR_DATA);
+                    LogregatorConfig.logMTRBlocks = logBlock;
+                    LogregatorConfig.logMTRData = logRailwayData;
                 }
             }
         } catch (Exception e) {

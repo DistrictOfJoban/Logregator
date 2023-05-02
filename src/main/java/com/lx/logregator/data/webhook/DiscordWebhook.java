@@ -2,8 +2,6 @@ package com.lx.logregator.data.webhook;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.lx.logregator.config.LogregatorConfig;
-import com.lx.logregator.data.event.EventType;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;

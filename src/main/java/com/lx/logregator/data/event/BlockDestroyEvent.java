@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class BlockDestroyEvent extends Event {
-    private static final EventType type = EventType.BLOCK_BREAK;
     private final String blockId;
     private final Area area;
     public BlockDestroyEvent(String blockId, Area area, List<Integer> permLevel) {
