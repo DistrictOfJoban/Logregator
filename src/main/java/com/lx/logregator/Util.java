@@ -17,6 +17,28 @@ public class Util {
         }
     }
 
+    public static int sliderValueToSpeed(int sliderValue) {
+        switch(sliderValue) {
+            case 0:
+                return 20;
+            case 1:
+                return 40;
+            case 2:
+                return 60;
+            case 3:
+                return 80;
+            case 4:
+                return 120;
+            case 5:
+                return 160;
+            case 6:
+                return 200;
+            case 7:
+                return 300;
+        }
+        return 0;
+    }
+
     public static String formatTime(long ms, boolean exactTime) {
         int seconds = (int)(ms / 1000);
         int minutes = (int)Math.round(seconds / 60.0);

@@ -68,6 +68,10 @@ public class MTRLoggingManager {
         keyMapping.put("use_real_time", "Real time Scheduling?");
         keyMapping.put("repeat_infinitely", "Repeat Route Instructions?");
         keyMapping.put("frequencies", "Schedule frequencies");
+        keyMapping.put("unlimited_trains", "Unlimited Trains?");
+        keyMapping.put("is_manual", "Is Manual?");
+        keyMapping.put("cruising_altitude", "Cruising altitude");
+        keyMapping.put("max_manual_speed", "Max manual driving speed");
         keyMapping.put("departures", "Scheduled timetable");
         keyMapping.put("acceleration_constant", "Acceleration");
         keyMapping.put("one_way", "One way");
@@ -272,6 +276,10 @@ public class MTRLoggingManager {
                 }
             }
             return finalString.toString();
+        }
+
+        if(fieldName.equals("max_manual_speed")) {
+            return Util.sliderValueToSpeed(Integer.parseInt(value)) + " km/h";
         }
 
         return value;
