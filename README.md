@@ -8,37 +8,39 @@ The config file is located in `<Your MC Folder>/config/logregator/config.json`.
 A sample json can be found below:
 ```
 {
-  "filteredItems": [
-    {
-      "itemId": "mtr:dashboard",
-      "permLevel": [0, 1]
+  "webhook": "<Discord Webhook URL Here>",
+  "events": {
+    "filteredItems": [
+      {
+        "itemId": "mtr:dashboard",
+        "permLevel": [0, 1]
+      }
+    ],
+    "blockBreak": [
+      {
+        "blockId": "minecraft:grass_block",
+        "area": {
+          "pos1": [5, 0, 5],
+          "pos2": [-5, 255, -5]
+        },
+        "permLevel": [0, 1]
+      }
+    ],
+    "blockPlace": [
+      {
+        "blockId": "minecraft:grass_block",
+        "area": {
+          "pos1": [5, 0, 5],
+          "pos2": [-5, 255, -5]
+        },
+        "permLevel": [0, 1]
+      }
+    ],
+    "mtr": {
+      "logBlock": true,
+      "logRailwayData": true
     }
-  ],
-  "blockBreak": [
-    {
-      "blockId": "minecraft:grass_block",
-      "area": {
-        "pos1": [5, 0, 5],
-        "pos2": [-5, 255, -5]
-      },
-      "permLevel": [0, 1]
-    }
-  ],
-  "blockPlace": [
-    {
-      "blockId": "minecraft:grass_block",
-      "area": {
-        "pos1": [5, 0, 5],
-        "pos2": [-5, 255, -5]
-      },
-      "permLevel": [0, 1]
-    }
-  ],
-  "mtr": {
-    "logBlock": true,
-    "logRailwayData": true
-  },
-  "webhook": "<Discord Webhook URL Here>"
+  }
 }
 ```
 
