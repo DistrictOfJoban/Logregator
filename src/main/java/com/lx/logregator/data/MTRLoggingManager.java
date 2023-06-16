@@ -370,10 +370,13 @@ public class MTRLoggingManager {
         String displayedName = !name.isEmpty() ? " \\\"" + IGui.formatStationName(name) + "\\\" " : " ";
 
         if(positions.length > 0) {
+            RailwayData railwayData = RailwayData.getInstance(player.world);
+
             StringBuilder sb = new StringBuilder();
             int i = 0;
             for(BlockPos pos : positions) {
-                sb.append(String.format("%d. **[%d, %d, %d]**", i+1, pos.getX(), pos.getY(), pos.getZ())).append("\n");
+                String closestStructure = Util.findNearestMTRStructure(railwayData, pos);
+                sb.append(String.format("%d. **[%d, %d, %d]**", i+1, pos.getX(), pos.getY(), pos.getZ())).append(closestStructure).append("\n");
                 i++;
             }
             embed.addField("Block Positions", sb.toString(), false);

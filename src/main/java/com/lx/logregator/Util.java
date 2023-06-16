@@ -1,6 +1,7 @@
 package com.lx.logregator;
 
 import com.google.gson.JsonArray;
+import mtr.data.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
@@ -70,11 +71,53 @@ public class Util {
         return String.format("`%d,%d,%d`", pos.getX(), pos.getY(), pos.getZ());
     }
 
+    public static String findNearestMTRStructure(RailwayData railwayData, BlockPos pos) {
+        double closest = 10000000;
+        boolean isAbs = false;
+        boolean isStation = false;
+        String structureName = null;
+
+        for(int i = 0; i < 2; i++) {
+            // We already found an area that directly covers the pos, no point in continuing
+            if(isAbs) continue;
+
+            boolean searchingStation = false;
+            if(i == 0) {
+                searchingStation = true;
+            }
+            if(i == 1) {
+                searchingStation = false;
+            }
+
+            for(AreaBase structure : (searchingStation ? railwayData.stations : railwayData.depots)) {
+                if(structure.inArea(pos.getX(), pos.getZ())) {
+                    structureName = structure.name;
+                    isAbs = true;
+                    isStation = searchingStation;
+                    break;
+                }
+                double dist = getManhattenDistance(structure.getCenter(), pos);
+                if(dist < closest) {
+                    isAbs = false;
+                    closest = dist;
+                    structureName = structure.name;
+                    isStation = searchingStation;
+                }
+            }
+        }
+
+        return structureName == null ? "" : (isAbs ? " (In " : " (Near ") + IGui.formatStationName(structureName) + (isStation ? " station)" : " depot)");
+    }
+
     public static List<Integer> fromJsonArray(JsonArray arr) {
         List<Integer> list = new ArrayList<>();
         for(int i = 0; i < arr.size(); i++) {
             list.add(arr.get(i).getAsInt());
         }
         return list;
+    }
+
+    public static double getManhattenDistance(BlockPos pos1, BlockPos pos2) {
+        return Math.abs(pos2.getX() - pos1.getX()) + Math.abs(pos2.getZ() - pos1.getZ());
     }
 }
