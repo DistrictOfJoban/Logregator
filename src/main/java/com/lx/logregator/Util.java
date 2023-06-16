@@ -96,7 +96,11 @@ public class Util {
                     isStation = searchingStation;
                     break;
                 }
-                double dist = getManhattenDistance(structure.getCenter(), pos);
+                BlockPos centeredStructurePos = structure.getCenter();
+                //Today I learned: The center pos is apparently nullable, which means there's no 2 corners in an area????
+                //idk how is this possible, but it happens at least on Joban so
+                if(centeredStructurePos == null) continue;
+                double dist = getManhattenDistance(centeredStructurePos, pos);
                 if(dist < closest) {
                     isAbs = false;
                     closest = dist;
