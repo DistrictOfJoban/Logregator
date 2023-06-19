@@ -369,16 +369,25 @@ public class MTRLoggingManager {
         Integer color = getColor(oldData, newData);
         String displayedName = !name.isEmpty() ? " \\\"" + IGui.formatStationName(name) + "\\\" " : " ";
 
-        if(positions.length > 0) {
-            RailwayData railwayData = RailwayData.getInstance(player.world);
+        RailwayData railwayData = RailwayData.getInstance(player.world);
+        SavedRailBase savedRailBase = Util.getAnySavedRailBase(railwayData, id);
 
+        if(positions.length > 0 || savedRailBase != null) {
             StringBuilder sb = new StringBuilder();
-            int i = 0;
-            for(BlockPos pos : positions) {
-                String closestStructure = Util.findNearestMTRStructure(railwayData, pos);
-                sb.append(String.format("%d. **[%d, %d, %d]**", i+1, pos.getX(), pos.getY(), pos.getZ())).append(closestStructure).append("\n");
-                i++;
+
+            if(positions.length > 0) {
+                int i = 0;
+                for(BlockPos pos : positions) {
+                    String closestStructure = Util.findNearestMTRStructure(railwayData, pos);
+                    sb.append(String.format("%d. **[%d, %d, %d]**", i+1, pos.getX(), pos.getY(), pos.getZ())).append(closestStructure).append("\n");
+                    i++;
+                }
+            } else {
+                BlockPos midPos = savedRailBase.getMidPos();
+                String closestStructure = Util.findNearestMTRStructure(railwayData, midPos);
+                sb.append(String.format("**[%d, %d, %d]**", midPos.getX(), midPos.getY(), midPos.getZ())).append(closestStructure).append("\n");
             }
+
             embed.addField("Block Positions", sb.toString(), false);
         }
 

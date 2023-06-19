@@ -4,9 +4,11 @@ import com.google.gson.JsonArray;
 import mtr.data.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Util {
     private static int PERM_LEVEL = 4;
@@ -69,6 +71,29 @@ public class Util {
 
     public static String formatBlockPos(BlockPos pos) {
         return String.format("`%d,%d,%d`", pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public static SavedRailBase getAnySavedRailBase(RailwayData railwayData, long id) {
+        for(int i = 0; i < 2; i++) {
+            boolean isPlatform = i == 0;
+            boolean isSiding = i == 1;
+
+            List<SavedRailBase> savedRails = null;
+
+            if(isPlatform) {
+                savedRails = railwayData.platforms.stream().filter(e -> e.id == id).collect(Collectors.toList());
+            }
+            if(isSiding) {
+                savedRails = railwayData.sidings.stream().filter(e -> e.id == id).collect(Collectors.toList());
+            }
+
+            SavedRailBase savedRailBase = savedRails.size() > 0 ? savedRails.get(0) : null;
+            if(savedRailBase != null) {
+                return savedRailBase;
+            }
+        }
+
+        return null;
     }
 
     public static String findNearestMTRStructure(RailwayData railwayData, BlockPos pos) {
