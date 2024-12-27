@@ -1,4 +1,4 @@
-package com.lx.logregator.data.webhook;
+package com.lx862.logregator.data.webhook;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -11,17 +11,17 @@ import java.util.*;
 
 /**
  * Class used to execute Discord Webhooks with low effort
- * Come from: https://gist.github.com/k3kdude/fba6f6b37594eae3d6f9475330733bdb
+ * Come from: <a href="https://gist.github.com/k3kdude/fba6f6b37594eae3d6f9475330733bdb">...</a>
  */
 public class DiscordWebhook implements Webhook {
 
+    private final List<Embed> embeds;
     private final String url;
     private String content;
     private String username;
     private String avatarUrl;
     private String timestamp;
     private boolean tts;
-    private List<Embed> embeds;
 
     /**
      * Constructs a new DiscordWebhook instance

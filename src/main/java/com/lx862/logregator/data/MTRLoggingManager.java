@@ -1,14 +1,14 @@
-package com.lx.logregator.data;
+package com.lx862.logregator.data;
 
 import com.google.gson.*;
-import com.lx.logregator.config.LogregatorConfig;
-import com.lx.logregator.data.webhook.DiscordEmbed;
-import com.lx.logregator.data.webhook.DiscordWebhook;
-import com.lx.logregator.Util;
+import com.lx862.logregator.config.LogregatorConfig;
+import com.lx862.logregator.data.webhook.DiscordEmbed;
+import com.lx862.logregator.data.webhook.DiscordWebhook;
+import com.lx862.logregator.Util;
 import mtr.data.*;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -125,7 +125,7 @@ public class MTRLoggingManager {
         return keyMapping.getOrDefault(fieldName, fieldName);
     }
 
-    public String tryGetFriendlyValue(String className, String fieldName, String rawValue, String value, World world) {
+    public String tryGetFriendlyValue(String className, String fieldName, String rawValue, String value, Level world) {
         if(value.isEmpty()) {
             return "(None)";
         }
@@ -261,14 +261,14 @@ public class MTRLoggingManager {
         }
 
         if(fieldName.equals("exits")) {
-            JsonObject jsonObject = new JsonParser().parse(rawValue).getAsJsonObject();
+            JsonObject jsonObject = JsonParser.parseString(rawValue).getAsJsonObject();
             StringBuilder finalString = new StringBuilder();
             for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
                 String exitNumber = entry.getKey();
                 JsonArray exitDestination = entry.getValue().getAsJsonArray();
                 finalString.append("\n").append(exitNumber);
 
-                if(exitDestination.size() > 0) {
+                if(!exitDestination.isEmpty()) {
                     for(JsonElement jsonElement : exitDestination) {
                         String exitDestinationStr = IGui.formatStationName(jsonElement.getAsString());
                         finalString.append("\n").append(" ").append(exitDestinationStr);
@@ -285,7 +285,7 @@ public class MTRLoggingManager {
         return value;
     }
 
-    public void send(ServerPlayerEntity player, Class<?> dataClass, long id, String name, List<String> oldData, List<String> newData, BlockPos[] positions) {
+    public void send(ServerPlayer player, Class<?> dataClass, long id, String name, List<String> oldData, List<String> newData, BlockPos[] positions) {
         final List<String> oldDataDiff;
         final List<String> newDataDiff;
 
@@ -324,7 +324,7 @@ public class MTRLoggingManager {
         }
     }
 
-    private void processMTREvent(ServerPlayerEntity player, Class<?> dataClass, long id, String name, List<String> oldData, List<String> newData, List<String> oldDataDiff, List<String> newDataDiff, BlockPos[] positions, MTRActionType actionType) {
+    private void processMTREvent(ServerPlayer player, Class<?> dataClass, long id, String name, List<String> oldData, List<String> newData, List<String> oldDataDiff, List<String> newDataDiff, BlockPos[] positions, MTRActionType actionType) {
         String className = dataClass.getName();
 
         boolean isBlock = className.contains(".block.") || className.contains(".blocks.") || className.contains("$TileEntity");
@@ -344,7 +344,7 @@ public class MTRLoggingManager {
             String rawValue = str.substring(rawKey.length() + 1);
             String value = rawValue.replace("\"", "");
             String friendlyKey = getFriendlyKeyName(key);
-            String friendlyValue = tryGetFriendlyValue(className, key, rawValue, value, player.world);
+            String friendlyValue = tryGetFriendlyValue(className, key, rawValue, value, player.getLevel());
             oldDatas.append(friendlyKey).append(": ").append("**").append(friendlyValue).append("**").append("\n");
         }
         embed.addField("Before", oldDatas.toString(), false);
@@ -360,7 +360,7 @@ public class MTRLoggingManager {
             String rawValue = str.substring(rawKey.length() + 1);
             String value = rawValue.replace("\"", "");
             String friendlyKey = getFriendlyKeyName(key);
-            String friendlyValue = tryGetFriendlyValue(className, key, rawValue, value, player.world);
+            String friendlyValue = tryGetFriendlyValue(className, key, rawValue, value, player.getLevel());
             newDatas.append(friendlyKey).append(": ").append("**").append(friendlyValue).append("**").append("\n");
         }
         embed.addField("After", newDatas.toString(), false);
@@ -369,7 +369,7 @@ public class MTRLoggingManager {
         Integer color = getColor(oldData, newData);
         String displayedName = !name.isEmpty() ? " \\\"" + IGui.formatStationName(name) + "\\\" " : " ";
 
-        RailwayData railwayData = RailwayData.getInstance(player.world);
+        RailwayData railwayData = RailwayData.getInstance(player.getLevel());
         SavedRailBase savedRailBase = Util.getAnySavedRailBase(railwayData, id);
 
         if(positions.length > 0 || savedRailBase != null) {
@@ -391,7 +391,7 @@ public class MTRLoggingManager {
             embed.addField("Block Positions", sb.toString(), false);
         }
 
-        embed.setTitle(actionType.getEmoji() + " " + getFriendlyClassName(className) + displayedName + actionType.getAction());
+        embed.setTitle(actionType.emojiRepresentation + " " + getFriendlyClassName(className) + displayedName + actionType.action);
         embed.setAuthor(player.getGameProfile().getName(), null, "https://minotar.net/avatar/" + player.getGameProfile().getName() + "/16");
         embed.setTimestamp();
         if(color != null) embed.setColor(new Color(color));

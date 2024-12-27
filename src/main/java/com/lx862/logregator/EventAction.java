@@ -1,22 +1,22 @@
-package com.lx.logregator;
+package com.lx862.logregator;
 
-import com.lx.logregator.config.LogregatorConfig;
-import com.lx.logregator.data.event.BlockDestroyEvent;
-import com.lx.logregator.data.event.BlockOpenEvent;
-import com.lx.logregator.data.event.BlockPlaceEvent;
-import com.lx.logregator.data.event.FilteredItemEvent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.event.GameEvent;
+import com.lx862.logregator.config.LogregatorConfig;
+import com.lx862.logregator.data.event.BlockDestroyEvent;
+import com.lx862.logregator.data.event.BlockOpenEvent;
+import com.lx862.logregator.data.event.BlockPlaceEvent;
+import com.lx862.logregator.data.event.FilteredItemEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 import java.util.HashMap;
 
 public class EventAction {
-    public static void checkLoggedItems(PlayerEntity player, ItemStack stack) {
-        String thisStackId = Registry.ITEM.getId(stack.getItem()).toString();
+    public static void checkLoggedItems(Player player, ItemStack stack) {
+        String thisStackId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
         for(FilteredItemEvent entry : LogregatorConfig.filteredItems) {
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put("itemId", thisStackId);
@@ -25,8 +25,8 @@ public class EventAction {
     }
 
     public static void onWorldEvent(Entity entity, GameEvent gameEvent, BlockPos pos) {
-        if(entity == null || !entity.isPlayer()) return;
-        PlayerEntity player = (PlayerEntity)entity;
+        if(entity == null || !entity.isAlwaysTicking()) return;
+        Player player = (Player) entity;
         if(gameEvent == GameEvent.BLOCK_DESTROY) {
             for(BlockDestroyEvent entry : LogregatorConfig.blockBreak) {
                 entry.send(player, pos, null);

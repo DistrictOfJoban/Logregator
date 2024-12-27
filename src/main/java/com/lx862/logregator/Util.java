@@ -1,17 +1,17 @@
-package com.lx.logregator;
+package com.lx862.logregator;
 
 import com.google.gson.JsonArray;
 import mtr.data.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Util {
-    private static int PERM_LEVEL = 4;
+    private static final int PERM_LEVEL = 4;
+
     public static String padZero(int i) {
         if(i <= 9) {
             return "0" + i;
@@ -21,25 +21,17 @@ public class Util {
     }
 
     public static int sliderValueToSpeed(int sliderValue) {
-        switch(sliderValue) {
-            case 0:
-                return 20;
-            case 1:
-                return 40;
-            case 2:
-                return 60;
-            case 3:
-                return 80;
-            case 4:
-                return 120;
-            case 5:
-                return 160;
-            case 6:
-                return 200;
-            case 7:
-                return 300;
-        }
-        return 0;
+        return switch (sliderValue) {
+            case 0 -> 20;
+            case 1 -> 40;
+            case 2 -> 60;
+            case 3 -> 80;
+            case 4 -> 120;
+            case 5 -> 160;
+            case 6 -> 200;
+            case 7 -> 300;
+            default -> 0;
+        };
     }
 
     public static String formatTime(long ms, boolean exactTime) {
@@ -60,9 +52,9 @@ public class Util {
         return formatTime(difference, false);
     }
 
-    public static int getPermissionLevel(PlayerEntity player) {
+    public static int getPermissionLevel(Player player) {
         for(int i = 0; i <= PERM_LEVEL; i++) {
-            if(player.hasPermissionLevel(PERM_LEVEL - i)) {
+            if(player.hasPermissions(PERM_LEVEL - i)) {
                 return i;
             }
         }
@@ -106,13 +98,7 @@ public class Util {
             // We already found an area that directly covers the pos, no point in continuing
             if(isAbs) continue;
 
-            boolean searchingStation = false;
-            if(i == 0) {
-                searchingStation = true;
-            }
-            if(i == 1) {
-                searchingStation = false;
-            }
+            boolean searchingStation = i == 0;
 
             for(AreaBase structure : (searchingStation ? railwayData.stations : railwayData.depots)) {
                 if(structure.inArea(pos.getX(), pos.getZ())) {
@@ -122,10 +108,10 @@ public class Util {
                     break;
                 }
                 BlockPos centeredStructurePos = structure.getCenter();
-                //Today I learned: The center pos is apparently nullable, which means there's no 2 corners in an area????
-                //idk how is this possible, but it happens at least on Joban so
+                // TIL: The center pos is apparently nullable, which means there's no 2 corners in an area????
+                // idk how is this possible, but it happens at least on Joban so
                 if(centeredStructurePos == null) continue;
-                double dist = getManhattenDistance(centeredStructurePos, pos);
+                double dist = getManhattanDistance(centeredStructurePos, pos);
                 if(dist < closest) {
                     isAbs = false;
                     closest = dist;
@@ -146,7 +132,7 @@ public class Util {
         return list;
     }
 
-    public static double getManhattenDistance(BlockPos pos1, BlockPos pos2) {
+    public static double getManhattanDistance(BlockPos pos1, BlockPos pos2) {
         return Math.abs(pos2.getX() - pos1.getX()) + Math.abs(pos2.getZ() - pos1.getZ());
     }
 }

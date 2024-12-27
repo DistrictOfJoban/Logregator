@@ -1,4 +1,4 @@
-package com.lx.logregator.data.webhook;
+package com.lx862.logregator.data.webhook;
 
 
 import java.io.IOException;

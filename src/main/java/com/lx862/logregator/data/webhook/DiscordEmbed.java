@@ -1,4 +1,4 @@
-package com.lx.logregator.data.webhook;
+package com.lx862.logregator.data.webhook;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -20,7 +20,7 @@ public class DiscordEmbed implements Embed {
     private Embed.Thumbnail thumbnail;
     private Embed.Image image;
     private Embed.Author author;
-    private final java.util.List<Embed.Field> fields = new ArrayList<>();
+    private final List<Embed.Field> fields = new ArrayList<>();
 
     public String getTitle() {
         return title;

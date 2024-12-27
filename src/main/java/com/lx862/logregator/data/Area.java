@@ -1,26 +1,18 @@
-package com.lx.logregator.data;
+package com.lx862.logregator.data;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
-public class Area {
-    private BlockPos pos1;
-    private BlockPos pos2;
-
-    public Area(BlockPos pos1, BlockPos pos2) {
-        this.pos1 = pos1;
-        this.pos2 = pos2;
-    }
-
-    public Area(JsonObject jsonObject) {
+public record Area(BlockPos pos1, BlockPos pos2) {
+    public static Area fromJson(JsonObject jsonObject) {
         JsonArray pos1Json = jsonObject.get("pos1").getAsJsonArray();
         JsonArray pos2Json = jsonObject.get("pos2").getAsJsonArray();
 
         BlockPos pos1 = new BlockPos(pos1Json.get(0).getAsInt(), pos1Json.get(1).getAsInt(), pos1Json.get(2).getAsInt());
         BlockPos pos2 = new BlockPos(pos2Json.get(0).getAsInt(), pos2Json.get(1).getAsInt(), pos2Json.get(2).getAsInt());
-        this.pos1 = pos1;
-        this.pos2 = pos2;
+
+        return new Area(pos1, pos2);
     }
 
     public boolean isInArea(BlockPos pos) {
@@ -29,7 +21,7 @@ public class Area {
                 && (between(pos1.getZ(), pos2.getZ(), pos.getZ()));
     }
 
-    private boolean between(int n1, int n2, int value) {
+    private static boolean between(int n1, int n2, int value) {
         return value >= Math.min(n1, n2) && value <= Math.max(n1, n2);
     }
 }

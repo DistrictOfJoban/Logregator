@@ -1,8 +1,11 @@
-package com.lx.logregator.config;
+package com.lx862.logregator.config;
 
 import com.google.gson.*;
-import com.lx.logregator.Logregator;
-import com.lx.logregator.data.event.*;
+import com.lx862.logregator.Logregator;
+import com.lx862.logregator.data.event.BlockDestroyEvent;
+import com.lx862.logregator.data.event.BlockOpenEvent;
+import com.lx862.logregator.data.event.BlockPlaceEvent;
+import com.lx862.logregator.data.event.FilteredItemEvent;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.nio.file.Files;
@@ -33,7 +36,7 @@ public class LogregatorConfig {
 
         Logregator.LOGGER.info("[Logregator] Reading Config...");
         try {
-            final JsonObject jsonConfig = new JsonParser().parse(String.join("", Files.readAllLines(CONFIG_PATH))).getAsJsonObject();
+            final JsonObject jsonConfig = JsonParser.parseString(String.join("", Files.readAllLines(CONFIG_PATH))).getAsJsonObject();
 
             if(jsonConfig.has("webhook")) {
                 webhookUrl = jsonConfig.get("webhook").getAsString();
