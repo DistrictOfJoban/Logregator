@@ -244,10 +244,14 @@ public class MTRLoggingManager {
         }
 
         if(fieldName.equals("color")) {
-            int val = Integer.parseInt(value);
-            Color color = new Color(val);
+            try {
+                int val = Integer.parseInt(value);
+                Color color = new Color(val);
 
-            return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()).toUpperCase();
+                return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()).toUpperCase();
+            } catch (NumberFormatException e) { // Signal uses human-readable color name
+                return value;
+            }
         }
 
         if(fieldName.equals("acceleration_constant")) {
